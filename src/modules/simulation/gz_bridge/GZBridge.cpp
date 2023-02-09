@@ -152,7 +152,7 @@ int GZBridge::init()
 		return PX4_ERROR;
 	}
 
-#if 0
+
 	// Airspeed: /world/$WORLD/model/$MODEL/link/airspeed_link/sensor/air_speed/air_speed
 	std::string airpressure_topic = "/world/" + _world_name + "/model/" + _model_name +
 					"/link/airspeed_link/sensor/air_speed/air_speed";
@@ -162,7 +162,6 @@ int GZBridge::init()
 		return PX4_ERROR;
 	}
 
-#endif
 
 	if (!_mixing_interface_esc.init(_model_name)) {
 		PX4_ERR("failed to init ESC output");
@@ -185,6 +184,7 @@ int GZBridge::task_spawn(int argc, char *argv[])
 	const char *model_pose = nullptr;
 	const char *model_sim = nullptr;
 	const char *px4_instance = nullptr;
+	std::string model_name_std;
 
 
 	bool error_flag = false;
@@ -248,7 +248,7 @@ int GZBridge::task_spawn(int argc, char *argv[])
 		}
 
 	} else if (!model_name) {
-		std::string model_name_std = std::string(model_sim) + "_" + std::string(px4_instance);
+		model_name_std = std::string(model_sim) + "_" + std::string(px4_instance);
 		model_name = model_name_std.c_str();
 	}
 
@@ -329,31 +329,31 @@ void GZBridge::clockCallback(const gz::msgs::Clock &clock)
 	pthread_mutex_unlock(&_node_mutex);
 }
 
-#if 0
-void GZBridge::airpressureCallback(const gz::msgs::FluidPressure &air_pressure)
+
+void GZBridge::airpressureCallback(const gz::msgs::AirSpeedSensor &air_pressure)
 {
 	if (hrt_absolute_time() == 0) {
 		return;
 	}
 
-	pthread_mutex_lock(&_mutex);
+	pthread_mutex_lock(&_node_mutex);
 
 	const uint64_t time_us = (air_pressure.header().stamp().sec() * 1000000)
 				 + (air_pressure.header().stamp().nsec() / 1000);
 
-	double air_pressure_value = air_pressure.pressure();
+	double air_pressure_value = air_pressure.diff_pressure();
 
 	differential_pressure_s report{};
 	report.timestamp_sample = time_us;
 	report.device_id = 1377548; // 1377548: DRV_DIFF_PRESS_DEVTYPE_SIM, BUS: 1, ADDR: 5, TYPE: SIMULATION
 	report.differential_pressure_pa = static_cast<float>(air_pressure_value); // hPa to Pa;
-	report.temperature = static_cast<float>(air_pressure.variance()) + CONSTANTS_ABSOLUTE_NULL_CELSIUS; // K to C
+	report.temperature = static_cast<float>(air_pressure.temperature()) + CONSTANTS_ABSOLUTE_NULL_CELSIUS; // K to C
 	report.timestamp = hrt_absolute_time();;
 	_differential_pressure_pub.publish(report);
 
 	pthread_mutex_unlock(&_node_mutex);
 }
-#endif
+
 
 void GZBridge::imuCallback(const gz::msgs::IMU &imu)
 {
