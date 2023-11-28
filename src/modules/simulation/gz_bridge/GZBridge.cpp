@@ -726,7 +726,7 @@ void GZBridge::laserScanCallback(const gz::msgs::LaserScan &scan)
 	obs.sensor_type = obstacle_distance_s::MAV_DISTANCE_SENSOR_LASER;
 	obs.min_distance = static_cast<uint16_t>(scan.range_min() * 100.);
 	obs.max_distance = static_cast<uint16_t>(scan.range_max() * 100.);
-	obs.angle_offset = static_cast<float>(-angle_min_deg);
+	obs.angle_offset = static_cast<float>(angle_min_deg);
 	obs.increment = static_cast<float>(SECTOR_SIZE_DEG);
 
 	// Map samples in FOV into sectors in ObstacleDistance
@@ -749,7 +749,6 @@ void GZBridge::laserScanCallback(const gz::msgs::LaserScan &scan)
 
 		index++;
 	}
-
 
 	_obstacle_distance_pub.publish(obs);
 }
