@@ -107,7 +107,6 @@ endif()
 
 if(CONFIG_EKF2_MAGNETOMETER)
 	list(APPEND EKF_SRCS
-		mag_3d_control.cpp
 		mag_control.cpp
 		mag_fusion.cpp
 	)
