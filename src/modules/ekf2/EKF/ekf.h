@@ -49,9 +49,9 @@
 # include "yaw_estimator/EKFGSF_yaw.h"
 #endif // CONFIG_EKF2_GNSS
 
-#include "bias_estimator.hpp"
-#include "height_bias_estimator.hpp"
-#include "position_bias_estimator.hpp"
+#include "bias_estimator/bias_estimator.hpp"
+#include "bias_estimator/height_bias_estimator.hpp"
+#include "bias_estimator/position_bias_estimator.hpp"
 
 #include <ekf_derivation/generated/state.h>
 
@@ -63,7 +63,7 @@
 #include "aid_sources/ZeroVelocityUpdate.hpp"
 
 #if defined(CONFIG_EKF2_AUX_GLOBAL_POSITION)
-# include "aux_global_position.hpp"
+# include "aid_sources/aux_global_position/aux_global_position.hpp"
 #endif // CONFIG_EKF2_AUX_GLOBAL_POSITION
 
 enum class Likelihood { LOW, MEDIUM, HIGH };
